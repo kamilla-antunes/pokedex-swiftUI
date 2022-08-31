@@ -9,6 +9,17 @@ import SwiftUI
 import Kingfisher
 
 struct PokemonDetailView: View {
+    @Environment(\.presentationMode) var presentationMode: Binding<PresentationMode>
+    
+    var backButton : some View { Button(action: {
+            self.presentationMode.wrappedValue.dismiss()
+            }) {
+                Image(systemName: "chevron.backward")
+                    .aspectRatio(contentMode: .fit)
+                    .foregroundColor(.black)
+            }
+    }
+    
     var pokemon: Pokemon
     @State private var scale: CGFloat = 0
     
@@ -47,9 +58,21 @@ struct PokemonDetailView: View {
                         
                         StatsViewGroup(pokemon: pokemon)
                     }
+                    .offset(y: -40)
+                    .scaleEffect(scale)
+                    .onAppear() {
+                        let baseAnimation = Animation.spring(dampingFraction: 0.5)
+                        let repeated = baseAnimation.repeatCount(1)
+                        
+                        withAnimation(repeated) {
+                            scale = 1
+                        }
+                    }
                 }
             }
             .navigationBarTitleDisplayMode(.inline)
+            .navigationBarBackButtonHidden(true)
+            .navigationBarItems(leading: backButton)
         }
     }
 }
